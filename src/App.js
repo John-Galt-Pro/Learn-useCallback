@@ -1,14 +1,6 @@
-import {Component, useState, useEffect} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
-
-const getSomeImages = () => {
-    console.log('fetching');
-    return [
-        'https://www.autocar.co.uk/sites/autocar.co.uk/files/styles/gallery_slide/public/images/car-reviews/first-drives/legacy/rolls_royce_phantom_top_10.jpg?itok=XjL9f1tx',
-        'https://www.supercars.net/blog/wp-content/uploads/2022/09/Best-New-Sports-and-Performance-Cars-2022_Chevrolet_Corvette.jpg'
-    ]
-}
 
 const Slider = (props) => {
 
@@ -23,16 +15,27 @@ const Slider = (props) => {
     function toggleAutoplay() {
         setAutoplay(autoplay => !autoplay)
     }
+
+    const getSomeImages  = useCallback( () => {
+        console.log('fetching');
+        return [
+            'https://www.autocar.co.uk/sites/autocar.co.uk/files/styles/gallery_slide/public/images/car-reviews/first-drives/legacy/rolls_royce_phantom_top_10.jpg?itok=XjL9f1tx',
+            'https://www.supercars.net/blog/wp-content/uploads/2022/09/Best-New-Sports-and-Performance-Cars-2022_Chevrolet_Corvette.jpg'
+        ]
+    }, [slide] );
+
     return (
         <Container>
             <div className="slider w-50 m-auto">
-                {
+                {/* {
                     getSomeImages().map( (url,i) => {
                         return (
                             <img key={i} className="d-block w-100" src={url} alt="slide" />
                         )
                     } )
-                }
+                } */}
+
+                <Slide getSomeImages={getSomeImages}/>
 
                 <div className="text-center mt-5">Active slide {slide} <br/>
                     {autoplay ? 'auto' : null}
@@ -50,6 +53,20 @@ const Slider = (props) => {
                 </div>
             </div>
         </Container>
+    )
+}
+
+const Slide = ( {getSomeImages} ) => {
+    const [images, setImages] = useState([]);
+
+    useEffect( () => {
+        setImages(getSomeImages())
+    }, [getSomeImages] )
+
+    return (
+        <>
+            {images.map( (url, i) => <img key={i} className="d-block w-100" src={url} alt="slide" /> )}
+        </>
     )
 }
 
